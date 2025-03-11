@@ -16,18 +16,23 @@ radios = {
 
 #greedy_search_global
 
-def greedy_search_global(sets):
-    previous_state = None
-    output = []
-    for states in sets:
-        if previous_state != None:
-            output.append(sets[states] - previous_state)
-        previous_state = sets[states]
-    return output
+def greedy_search_global(radios):
+    covered_states = set()
+    needed_radios = []
+    
+    sorted_radios = sorted(radios.items(), key=lambda x: len(x[1]), reverse=True)
+    
+    for radio, states in sorted_radios:
+        new_states = states - covered_states
+        if new_states:
+            covered_states.update(new_states)
+            needed_radios.append(radio)
+    
+    return needed_radios
 
 #greedy_search_local
 
-def greedy_search_local(sets):
+def greedy_search_local(radios):
     pass
 
 def main():
