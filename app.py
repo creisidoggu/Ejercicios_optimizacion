@@ -1,8 +1,5 @@
 import random
 
-# greedy_search_global
-
-
 def greedy_search_global(radios):
     covered_states = set()
     needed_radios = []
@@ -17,17 +14,14 @@ def greedy_search_global(radios):
 
     return needed_radios
 
-
-# random_search
 def random_search(radios, iterations=1000):
     best_solution = None
-    best_coverage = set()
 
     all_radios = list(radios.keys())
     all_states = set().union(*radios.values())
 
     for _ in range(iterations):
-        random.shuffle(all_radios)  # Mezclamos aleatoriamente las radios
+        random.shuffle(all_radios)
         selected_radios = []
         covered_states = set()
 
@@ -42,7 +36,6 @@ def random_search(radios, iterations=1000):
         if len(covered_states) == len(all_states):
             if best_solution is None or len(selected_radios) < len(best_solution):
                 best_solution = selected_radios
-                best_coverage = covered_states
 
     return best_solution
 
@@ -63,8 +56,20 @@ def main():
         "ktwelve": {"LA"},
         "kthirteen": {"MO", "AR"},
     }
-    return greedy_search_global(radios)
+    
+    print("Seleccione el método de búsqueda:\n1. Búsqueda voraz\n2. Búsqueda aleatoria\n")
+    choice = input("Ingrese el número de la opción: ")
+    
+    if choice == "1":
+        search_method = greedy_search_global
+    elif choice == "2":
+        search_method = random_search
+    else:
+        print("Opción no válida. Se usará la búsqueda voraz por defecto.")
+        search_method = greedy_search_global
+    
+    print("Solución encontrada:", search_method(radios))
 
 
 if __name__ == "__main__":
-    print(main())
+    main()
