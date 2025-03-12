@@ -21,7 +21,7 @@ cd Ejercicios_optimizacion
 
 ## Ejecución del Código
 
-Para ejecutar el código, utiliza el siguiente comando:
+No requiere de ningún tipo de dependencia así que para ejecutar el código, utiliza el siguiente comando:
 
 ```bash
 python app.py
