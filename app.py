@@ -23,34 +23,32 @@ def local_search(radios, initial_solution=None, max_iterations=100):
     """
     all_states = set().union(*radios.values())
 
-    current_solution = (
-        initial_solution if initial_solution else exact_global_min(radios)
-    )
+    current_solution = initial_solution or exact_global_min(radios) or []
     current_size = len(current_solution)
 
-    def evaluate(solution):
-        covered = set().union(*[radios[radio] for radio in solution])
-        return len(covered) == len(all_states), len(solution)
+    def is_valid(solution):
+        return get_all_states({k: radios[k] for k in solution})== all_states
 
     for _ in range(max_iterations):
         improved = False
-
         neighbors = [
             current_solution[:i] + current_solution[i + 1 :]
             for i in range(len(current_solution))
         ]
 
         for neighbor in neighbors:
-            if not improved:
-                break
-
-            full_coverage, size = evaluate(neighbor)
-
-            if full_coverage and size < current_size:
+            if len(neighbor) >= current_size:
+                continue
+                
+            if is_valid(neighbor):
                 current_solution = neighbor
-                current_size = size
+                current_size = len(neighbor)
                 improved = True
                 break
+                
+        if not improved:
+            break
+            
     return current_solution
 
 method_list = {
