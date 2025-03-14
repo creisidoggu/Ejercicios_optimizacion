@@ -1,24 +1,20 @@
 import itertools
 
+def get_all_states(radios):
+    return set().union(*radios.values())
 
 def exact_global_min(radios):
     """
-    Find the global minimun of the states.
+    Find the global minimum using exact search.
     """
-    all_states = set().union(*radios.values())
-    best_solution = None
-
+    all_states = get_all_states(radios)
     sorted_radios = sorted(radios.items(), key=lambda x: len(x[1]), reverse=True)
 
     for k in range(1, len(radios) + 1):
         for combo in itertools.combinations(sorted_radios, k):
-            current_names = [r[0] for r in combo]
-            covered = set().union(*[r[1] for r in combo])
-            if len(covered) == len(all_states):
-                if best_solution is None or len(current_names) < len(best_solution):
-                    best_solution = current_names
-                return best_solution
-    return best_solution
+            if get_all_states(dict(combo)) == all_states:
+                return [radio[0] for radio in combo]
+    return None
 
 
 def local_search(radios, initial_solution=None, max_iterations=100):
@@ -57,6 +53,10 @@ def local_search(radios, initial_solution=None, max_iterations=100):
                 break
     return current_solution
 
+method_list = {
+    "Global minimun" : exact_global_min,
+    "Local minimun" : local_search,
+}
 
 def main():
     radios = {
@@ -75,18 +75,20 @@ def main():
         "kthirteen": {"MO", "AR"},
     }
 
-    print("Seleccione el método de búsqueda:\n1. Mínimo global\n2. Mínimo local\n")
+    print("Select a search method:")
+    for method_names in method_list:
+        print(method_names)
     choice = input("Ingrese el número de la opción: ")
 
     if choice == "1":
-        search_method = exact_global_min
+        search_method = method_list["Global minimun"]
     elif choice == "2":
-        search_method = local_search
+        search_method = method_list["Local minimun"]
     else:
-        print("Opción no válida. Se usará el mínimo global por defecto.")
+        print("Unvalid option. Global minimun will be used.")
         search_method = exact_global_min
 
-    print("Solución encontrada:", search_method(radios))
+    print("Solution found:", search_method(radios))
 
 
 if __name__ == "__main__":
