@@ -74,9 +74,9 @@ def main():
     }
 
     print("Select a search method:")
-    for method_names in method_list:
-        print(method_names)
-    choice = input("Ingrese el número de la opción: ")
+    for i, method_name in enumerate(method_list, start=1):
+        print(f"{i}. {method_name}")
+    choice = input("Enter the number of the option: ")
 
     if choice == "1":
         search_method = method_list["Global minimun"]
