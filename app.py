@@ -1,43 +1,60 @@
-import random
+import itertools
 
-def greedy_search_global(radios):
-    covered_states = set()
-    needed_radios = []
-
-    sorted_radios = sorted(radios.items(), key=lambda x: len(x[1]), reverse=True)
-
-    for radio, states in sorted_radios:
-        new_states = states - covered_states
-        if new_states:
-            covered_states.update(new_states)
-            needed_radios.append(radio)
-
-    return needed_radios
-
-def random_search(radios, iterations=1000):
-    best_solution = None
-
-    all_radios = list(radios.keys())
+def exact_global_min(radios):
+    """
+    Encuentra un mínimo global 
+    """
     all_states = set().union(*radios.values())
-
-    for _ in range(iterations):
-        random.shuffle(all_radios)
-        selected_radios = []
-        covered_states = set()
-
-        for radio in all_radios:
-            if covered_states == all_states:
-                break
-            new_states = radios[radio] - covered_states
-            if new_states:
-                covered_states.update(new_states)
-                selected_radios.append(radio)
-
-        if len(covered_states) == len(all_states):
-            if best_solution is None or len(selected_radios) < len(best_solution):
-                best_solution = selected_radios
-
+    best_solution = None
+    
+    sorted_radios = sorted(radios.items(), 
+                         key=lambda x: len(x[1]), 
+                         reverse=True)
+    
+    for k in range(1, len(radios) + 1):
+        for combo in itertools.combinations(sorted_radios, k):
+            current_names = [r[0] for r in combo]
+            covered = set().union(*[r[1] for r in combo])
+            
+            if len(covered) == len(all_states):
+                if best_solution is None or len(current_names) < len(best_solution):
+                    best_solution = current_names
+                return best_solution
+    
     return best_solution
+
+def local_search(radios, initial_solution=None, max_iterations=100):
+    """
+    Encuentra un mínimo local mediante búsqueda de entorno local
+    """
+    all_states = set().union(*radios.values())
+    
+    current_solution = initial_solution if initial_solution else exact_global_min(radios)
+    current_size = len(current_solution)
+    
+    def evaluate(solution):
+        covered = set().union(*[radios[radio] for radio in solution])
+        return len(covered) == len(all_states), len(solution)
+    
+    for _ in range(max_iterations):
+        improved = False
+        
+        neighbors = [current_solution[:i] + current_solution[i+1:] 
+                    for i in range(len(current_solution))]
+        
+        for neighbor in neighbors:
+            full_coverage, size = evaluate(neighbor)
+            
+            if full_coverage and size < current_size:
+                current_solution = neighbor
+                current_size = size
+                improved = True
+                break 
+                
+        if not improved:
+            break
+            
+    return current_solution
 
 
 def main():
@@ -57,16 +74,16 @@ def main():
         "kthirteen": {"MO", "AR"},
     }
     
-    print("Seleccione el método de búsqueda:\n1. Búsqueda voraz\n2. Búsqueda aleatoria\n")
+    print("Seleccione el método de búsqueda:\n1. Mínimo global\n2. Mínimo local\n")
     choice = input("Ingrese el número de la opción: ")
     
     if choice == "1":
-        search_method = greedy_search_global
+        search_method = exact_global_min
     elif choice == "2":
-        search_method = random_search
+        search_method = local_search
     else:
         print("Opción no válida. Se usará la búsqueda voraz por defecto.")
-        search_method = greedy_search_global
+        search_method = exact_global_min
     
     print("Solución encontrada:", search_method(radios))
 
