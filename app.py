@@ -1,4 +1,5 @@
 import itertools
+import random
 
 def get_all_states(radios):
     return set().union(*radios.values())
@@ -17,43 +18,53 @@ def exact_global_min(radios):
     return None
 
 
-def local_search(radios, initial_solution=None, max_iterations=100):
+def local_search_with_restarts(radios, max_iterations=100, max_restarts=10):
     """
-    Find a local minimun using local search on the enviroment
+    Find a local minimum using local search with restarts to approximate the global minimum.
     """
-    all_states = set().union(*radios.values())
-
-    current_solution = initial_solution or exact_global_min(radios) or []
-    current_size = len(current_solution)
+    all_states = get_all_states(radios)
 
     def is_valid(solution):
-        return get_all_states({k: radios[k] for k in solution})== all_states
+        return get_all_states({k: radios[k] for k in solution}) == all_states
 
-    for _ in range(max_iterations):
-        improved = False
-        neighbors = [
-            current_solution[:i] + current_solution[i + 1 :]
-            for i in range(len(current_solution))
-        ]
+    best_solution = None
+    best_size = float('inf')
 
-        for neighbor in neighbors:
-            if len(neighbor) >= current_size:
-                continue
+    for _ in range(max_restarts):
+        # Iniciar con una solución aleatoria válida
+        current_solution = list(radios.keys())
+        random.shuffle(current_solution)
+
+        # Reducir la solución por eliminación
+        for _ in range(max_iterations):
+            improved = False
+            neighbors = [
+                current_solution[:i] + current_solution[i + 1 :]
+                for i in range(len(current_solution))
+            ]
+
+            for neighbor in neighbors:
+                if len(neighbor) >= len(current_solution):
+                    continue
                 
-            if is_valid(neighbor):
-                current_solution = neighbor
-                current_size = len(neighbor)
-                improved = True
+                if is_valid(neighbor):
+                    current_solution = neighbor
+                    improved = True
+                    break
+
+            if not improved:
                 break
-                
-        if not improved:
-            break
-            
-    return current_solution
+        
+        # Verificar si encontramos una mejor solución global
+        if len(current_solution) < best_size:
+            best_solution = current_solution
+            best_size = len(current_solution)
+
+    return best_solution
 
 method_list = {
     "Global minimun" : exact_global_min,
-    "Local minimun" : local_search,
+    "Local minimun" : local_search_with_restarts,
 }
 
 def main():
