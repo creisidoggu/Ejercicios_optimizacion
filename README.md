@@ -27,4 +27,6 @@ Este enfoque es más eficiente que la búsqueda global exacta, aunque no garanti
 
 Al combinar técnicas de búsqueda local con reinicios, podemos encontrar soluciones cercanas al óptimo sin incurrir en altos costos computacionales.
 
+Aún así en este problema tan sencillo la diferencia no es notable al usar cualquiera de los dos ya que son pocos datos.
+
 [Guía de instalación y uso del proyecto](how_to_execute.md)
