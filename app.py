@@ -2,6 +2,9 @@ import itertools
 import random
 
 def get_all_states(radios):
+    """
+    Returns all the states of the problem's country
+    """
     return set().union(*radios.values())
 
 def exact_global_min(radios):
@@ -17,54 +20,36 @@ def exact_global_min(radios):
                 return [radio[0] for radio in combo]
     return None
 
-
-def local_search_with_restarts(radios, max_iterations=100, max_restarts=10):
+def minimun_local_search(radios, max_iterations=100):
     """
     Find a local minimum using local search with restarts to approximate the global minimum.
     """
     all_states = get_all_states(radios)
+    stations = list(radios.keys())
+    limit = len(exact_global_min(radios))
+    if limit is None:
+        limit = len(stations)  
 
-    def is_valid(solution):
-        return get_all_states({k: radios[k] for k in solution}) == all_states
+    locals = []
 
-    best_solution = None
-    best_size = float('inf')
+    for _ in range(max_iterations):
+        random.shuffle(stations)
+        selected = stations[:limit]
 
-    for _ in range(max_restarts):
-        # Iniciar con una solución aleatoria válida
-        current_solution = list(radios.keys())
-        random.shuffle(current_solution)
+        covered_states = set().union(*(radios[s] for s in selected))
+        missing_states = all_states - covered_states
+        missing_count = len(missing_states)
 
-        # Reducir la solución por eliminación
-        for _ in range(max_iterations):
-            improved = False
-            neighbors = [
-                current_solution[:i] + current_solution[i + 1 :]
-                for i in range(len(current_solution))
-            ]
+        locals.append(missing_count) 
 
-            for neighbor in neighbors:
-                if len(neighbor) >= len(current_solution):
-                    continue
-                
-                if is_valid(neighbor):
-                    current_solution = neighbor
-                    improved = True
-                    break
+        if missing_count == 0:
+            return locals
 
-            if not improved:
-                break
-        
-        # Verificar si encontramos una mejor solución global
-        if len(current_solution) < best_size:
-            best_solution = current_solution
-            best_size = len(current_solution)
-
-    return best_solution
+    return locals
 
 method_list = {
-    "Global minimun" : exact_global_min,
-    "Local minimun" : local_search_with_restarts,
+    "Global minimun": exact_global_min,
+    "Local minimun": minimun_local_search,
 }
 
 def main():
@@ -94,7 +79,7 @@ def main():
     elif choice == "2":
         search_method = method_list["Local minimun"]
     else:
-        print("Unvalid option. Global minimun will be used.")
+        print("Invalid option. Global minimun will be used.")
         search_method = exact_global_min
 
     print("Solution found:", search_method(radios))
