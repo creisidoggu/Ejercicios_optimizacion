@@ -68,13 +68,23 @@ def one_point_crossover(parent_a, parent_b, xover_point):
     children.append(child_2)
     return children
 
-def main():
-    items = establish_individuals(path)
-    population = create_population(len(items), 60)
-    items_max_weight = 5
+def mutate_individual(individual, chromosome_length):
+    """
+    Mutates a random gene in an individual by flipping its value (0 -> 1 or 1 -> 0).
+    """
+    random_index = random.randint(0, chromosome_length - 1)
 
-    probabilities = set_probabilities_of_population(population, items, items_max_weight)
-    print(probabilities)
+    individual[random_index] = 0 if individual[random_index] == 1 else 1
+
+    return individual
+
+def main():
+    individual = [1, 0, 1, 1, 0, 0, 1]
+    chromosome_length = len(individual)
+
+    mutated = mutate_individual(individual, chromosome_length)
+    print(mutated)
+
 
 
 if __name__ == '__main__':
