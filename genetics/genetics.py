@@ -15,6 +15,9 @@ def establish_individuals(file):
     return [{ "weight": obj["weight"], "value": obj["value"] } for obj in json_data]
 
 def create_population(individual_size, population_length = 60):
+    """
+    This step create a population in base of an individual size
+    """
     population = []
     for individual in range(population_length):
         current_individual = []
@@ -23,8 +26,29 @@ def create_population(individual_size, population_length = 60):
         population.append(current_individual)
     return population
 
+def calculate_individual_fitness(individual, items, items_max_weight):
+    total_weight = 0
+    total_value = 0
+    
+    for gene_index in range(len(individual)):
+        if individual[gene_index] == 1:
+            total_weight += items[gene_index]["weight"]
+            total_value += items[gene_index]["value"]
+            
+            if total_weight > items_max_weight:
+                return 0
+
+    return total_value
+
+
 def main():
-    print(create_population(len(establish_individuals(path))))
+    items = establish_individuals(path)
+    population = create_population(len(items)) 
+    items_max_weight = 9
+    
+    for i, individual in enumerate(population):
+        fitness = calculate_individual_fitness(individual, items, items_max_weight)
+        print(f"Individual {i+1}: {individual} -> Fitness: {fitness}")
 
 if __name__ == '__main__':
     main()
