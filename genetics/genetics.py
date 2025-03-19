@@ -1,7 +1,10 @@
 import json
 import random
+import matplotlib.pyplot as plt
+import os
 # Added some more variables of the items if i want to use it for my dnd page, but for this problem i'll use only weight and value
 path = "genetics/data/items.json"
+image_path = 'genetics/img'
 
 def establish_individuals(file):
     """
@@ -99,28 +102,38 @@ def mutate_individual(individual, chromosome_length):
 
 
 def run_ga(population_size, number_of_generations, knapsack_capacity):
-    """Executes the genetic algortihm to optimize the selection of items of the backpack"""
     items = establish_individuals(path)
     individual_size = len(items)
-    
     global_population = create_population(individual_size, population_size)
     best_global_fitness = 0
+    fitness_progress = []
 
     for _ in range(number_of_generations):
         current_best_fitness = max(calculate_individual_fitness(ind, items, knapsack_capacity) for ind in global_population)
-        
+        fitness_progress.append(current_best_fitness)
         if current_best_fitness > best_global_fitness:
             best_global_fitness = current_best_fitness
-
+        
         the_chosen = roulette_wheel_selection(global_population, items, knapsack_capacity, population_size // 2)
         the_children = []
         for i in range(0, len(the_chosen) - 1, 2):
             xover_point = random.randint(1, individual_size - 1)
-            the_children.extend(one_point_crossover(the_chosen[i], the_chosen[i+1], xover_point))
+            the_children.extend(one_point_crossover(the_chosen[i], the_chosen[i + 1], xover_point))
         the_children = [mutate_individual(child, len(child)) for child in the_children]
         global_population = the_children + the_chosen
     
+    plt.plot(range(number_of_generations), fitness_progress, marker='o', linestyle='-', color='b')
+    plt.xlabel('Generaciones')
+    plt.ylabel('Mejor Aptitud')
+    plt.title('Evolución de la Aptitud en el Algoritmo Genético')
+    plt.grid()
+    if not os.path.exists(image_path):
+        os.makedirs(image_path)
+    plt.savefig(f"{image_path}/fitness_evolution.png")
+    print("Gráfico guardado como fitness_evolution.png")
+    
     return best_global_fitness
+
 
 if __name__ == "__main__":
     final_fitness = run_ga(population_size=60, number_of_generations=100, knapsack_capacity=50)
