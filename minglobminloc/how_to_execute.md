@@ -24,7 +24,7 @@ cd Ejercicios_optimizacion
 No requiere de ningún tipo de dependencia así que para ejecutar el código, utiliza el siguiente comando:
 
 ```bash
-python app.py
+python minglobminloc.py
 ```
 
 ---
