@@ -9,6 +9,7 @@ def establish_individuals(file):
     
     with open(file) as json_file:
         json_data = json.load(json_file)
+        json_file.close()
 
     return [{ "weight": obj["weight"], "value": obj["value"] } for obj in json_data]
 
