@@ -57,6 +57,17 @@ def set_probabilities_of_population(population, items, items_max_weight):
 
     return probabilities
 
+def roulette_wheel_selection(population, number_of_selections):
+    possible_probabilities = set_probabilities_of_population(population)
+    slices = []
+    total = 0
+    for i in range(number_of_selections):
+        slices.append(i, total, total+possible_probabilities[i])
+        total += possible_probabilities[i]
+    spin = random.randrange(0,2)
+    result = [slice for slice in slices if slice[1]<spin<=slice[2]]
+    return result
+
 def one_point_crossover(parent_a, parent_b, xover_point):
     """
     Creates two new individuals based on two parents
