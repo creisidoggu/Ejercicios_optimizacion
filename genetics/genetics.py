@@ -1,4 +1,5 @@
-
+def encoding_solution():
+    pass
 
 def main():
     pass
