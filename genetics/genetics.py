@@ -64,7 +64,7 @@ def one_point_crossover(parent_a, parent_b, xover_point):
     children = []
     child_1 = parent_a[0:xover_point]+parent_b[xover_point:len(parent_b)]
     children.append(child_1)
-    child_2 = parent_a[0:xover_point]+parent_b[xover_point:len(parent_b)]
+    child_2 = parent_b[0:xover_point]+parent_a[xover_point:len(parent_b)]
     children.append(child_2)
     return children
 
