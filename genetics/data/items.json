@@ -1,0 +1,59 @@
+[
+    {
+      "name": "Whetstone",
+      "description": "A small stone used to keep bladed weapons sharp.",
+      "weight": 0.5,
+      "value": 2,
+      "type": "tool"
+    },
+    {
+      "name": "Healing Potion Flask",
+      "description": "A small glass flask with a red liquid that restores 10 health points.",
+      "weight": 0.3,
+      "value": 50,
+      "type": "potion"
+    },
+    {
+      "name": "10-meter Rope",
+      "description": "A sturdy hemp rope useful for climbing or tying things.",
+      "weight": 2.0,
+      "value": 5,
+      "type": "tool"
+    },
+    {
+      "name": "Torch",
+      "description": "A wooden stick with one end wrapped in cloth, ready to be lit.",
+      "weight": 1.0,
+      "value": 1,
+      "type": "lighting"
+    },
+    {
+      "name": "Steel Dagger",
+      "description": "A small dagger with a sharp blade, useful in combat or as a tool.",
+      "weight": 0.8,
+      "value": 10,
+      "type": "weapon"
+    },
+    {
+      "name": "Travel Ration",
+      "description": "A pack of dried food and nuts sufficient for one day.",
+      "weight": 0.5,
+      "value": 3,
+      "type": "food"
+    },
+    {
+      "name": "Kingdom Map",
+      "description": "An old parchment showing the geography of the region.",
+      "weight": 0.2,
+      "value": 10,
+      "type": "document"
+    },
+    {
+      "name": "Holy Symbol",
+      "description": "An amulet bearing the mark of a deity, used by clerics and paladins.",
+      "weight": 0.3,
+      "value": 15,
+      "type": "mystic"
+    }
+  ]
+  
