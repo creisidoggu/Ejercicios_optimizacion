@@ -57,16 +57,24 @@ def set_probabilities_of_population(population, items, items_max_weight):
 
     return probabilities
 
-def roulette_wheel_selection(population, number_of_selections):
-    possible_probabilities = set_probabilities_of_population(population)
-    slices = []
-    total = 0
-    for i in range(number_of_selections):
-        slices.append(i, total, total+possible_probabilities[i])
-        total += possible_probabilities[i]
-    spin = random.randrange(0,2)
-    result = [slice for slice in slices if slice[1]<spin<=slice[2]]
-    return result
+def roulette_wheel_selection(population, items, items_max_weight, number_of_selections):
+    """
+    Select individuals randomly
+    """
+    probabilities = set_probabilities_of_population(population, items, items_max_weight)
+    selected = []
+    
+    for _ in range(number_of_selections):
+        spin = random.uniform(0, 1)
+        cumulative_probability = 0
+        
+        for i, probability in enumerate(probabilities):
+            cumulative_probability += probability
+            if spin <= cumulative_probability:
+                selected.append(population[i])
+                break
+    
+    return selected
 
 def one_point_crossover(parent_a, parent_b, xover_point):
     """
@@ -89,14 +97,31 @@ def mutate_individual(individual, chromosome_length):
 
     return individual
 
-def main():
-    individual = [1, 0, 1, 1, 0, 0, 1]
-    chromosome_length = len(individual)
 
-    mutated = mutate_individual(individual, chromosome_length)
-    print(mutated)
+def run_ga(population_size, number_of_generations, knapsack_capacity):
+    """Executes the genetic algortihm to optimize the selection of items of the backpack"""
+    items = establish_individuals(path)
+    individual_size = len(items)
+    
+    global_population = create_population(individual_size, population_size)
+    best_global_fitness = 0
 
+    for _ in range(number_of_generations):
+        current_best_fitness = max(calculate_individual_fitness(ind, items, knapsack_capacity) for ind in global_population)
+        
+        if current_best_fitness > best_global_fitness:
+            best_global_fitness = current_best_fitness
 
+        the_chosen = roulette_wheel_selection(global_population, items, knapsack_capacity, population_size // 2)
+        the_children = []
+        for i in range(0, len(the_chosen) - 1, 2):
+            xover_point = random.randint(1, individual_size - 1)
+            the_children.extend(one_point_crossover(the_chosen[i], the_chosen[i+1], xover_point))
+        the_children = [mutate_individual(child, len(child)) for child in the_children]
+        global_population = the_children + the_chosen
+    
+    return best_global_fitness
 
-if __name__ == '__main__':
-    main()
+if __name__ == "__main__":
+    final_fitness = run_ga(population_size=60, number_of_generations=100, knapsack_capacity=50)
+    print("Mejor aptitud obtenida:", final_fitness)
