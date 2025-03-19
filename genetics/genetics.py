@@ -27,6 +27,9 @@ def create_population(individual_size, population_length = 60):
     return population
 
 def calculate_individual_fitness(individual, items, items_max_weight):
+    """
+    Calculate the "Value" of any of the individuals
+    """
     total_weight = 0
     total_value = 0
     
@@ -40,15 +43,29 @@ def calculate_individual_fitness(individual, items, items_max_weight):
 
     return total_value
 
+def set_probabilities_of_population(population, items, items_max_weight):
+    """
+    Calculates the probability of selection for each individual in the population.
+    """
+    fitness_values = [calculate_individual_fitness(individual, items, items_max_weight) for individual in population]
+    total_fitness = sum(fitness_values)
+
+    if total_fitness == 0:
+        return [1 / len(population)] * len(population)
+
+    probabilities = [fitness / total_fitness for fitness in fitness_values]
+
+    return probabilities
+
 
 def main():
     items = establish_individuals(path)
-    population = create_population(len(items)) 
-    items_max_weight = 9
-    
-    for i, individual in enumerate(population):
-        fitness = calculate_individual_fitness(individual, items, items_max_weight)
-        print(f"Individual {i+1}: {individual} -> Fitness: {fitness}")
+    population = create_population(len(items), 60)
+    items_max_weight = 5
+
+    probabilities = set_probabilities_of_population(population, items, items_max_weight)
+    print(probabilities)
+
 
 if __name__ == '__main__':
     main()
