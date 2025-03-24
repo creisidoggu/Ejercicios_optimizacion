@@ -76,6 +76,3 @@ Para una guía detallada sobre la instalación, configuración y uso avanzado de
 ---
 
 ¡Optimiza tu cobertura de radio y alcanza nuevas alturas! 📡🚀
-
----
-Answer from Perplexity: pplx.ai/share
